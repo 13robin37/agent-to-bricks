@@ -21,6 +21,10 @@ class ATB_Element_Validator {
 		'slider', 'slider-nested', 'carousel',
 		'form', 'map', 'code', 'template',
 		'post-content', 'posts', 'pagination',
+		'list', 'social-icons', 'alert', 'progress-bar',
+		'countdown', 'counter', 'pricing-tables', 'team-members',
+		'testimonials', 'logo', 'search', 'sidebar',
+		'wordpress', 'shortcode',
 	);
 
 	/**

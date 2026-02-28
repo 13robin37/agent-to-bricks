@@ -74,6 +74,7 @@ class ATB_Site_API {
 			'pluginVersion'  => defined( 'AGENT_BRICKS_VERSION' ) ? AGENT_BRICKS_VERSION : null,
 			'phpVersion'     => current_user_can( 'manage_options' ) ? PHP_VERSION : null,
 			'wpVersion'      => get_bloginfo( 'version' ),
+			'locale'         => get_locale(),
 		), 200 );
 	}
 
@@ -135,7 +136,82 @@ class ATB_Site_API {
 	}
 
 	/**
+	 * Locale-independent English descriptions for known Bricks element types.
+	 *
+	 * Bricks element labels (e.g. "Basic Text") are translated via WordPress i18n,
+	 * so on non-English installs an AI agent may see e.g. "Einfacher Text" (German)
+	 * and not know which element to use. This map provides a stable English
+	 * description keyed by the element slug (which never changes with locale).
+	 *
+	 * @return array<string, string>
+	 */
+	private static function element_descriptions(): array {
+		return [
+			// Layout
+			'section'            => 'Top-level page section wrapper (every page is built from sections)',
+			'container'          => 'Content container inside a section',
+			'block'              => 'Flex layout block for rows and columns',
+			'div'                => 'Generic wrapper element',
+
+			// Typography
+			'heading'            => 'Heading text (h1–h6, set level via "tag" setting)',
+			'text-basic'         => 'Simple text / paragraph — use for standard body text',
+			'rich-text'          => 'Rich text editor with full inline HTML formatting (bold, italic, links)',
+			'text-link'          => 'Clickable inline text link',
+
+			// Interactive
+			'button'             => 'Clickable button element',
+			'icon'               => 'Icon element (SVG or icon-font)',
+			'image'              => 'Image element',
+			'video'              => 'Video embed element',
+
+			// Navigation
+			'nav-menu'           => 'WordPress menu rendered as navigation',
+			'nav-nested'         => 'Nested navigation with custom menu items',
+			'offcanvas'          => 'Off-canvas slide-out panel',
+
+			// Components
+			'accordion'          => 'Collapsible accordion',
+			'accordion-nested'   => 'Nested accordion with custom content per item',
+			'tabs'               => 'Tabbed content panels',
+			'tabs-nested'        => 'Nested tabs with custom content per tab',
+			'slider'             => 'Content slider / slideshow',
+			'slider-nested'      => 'Nested slider with custom slide content',
+			'carousel'           => 'Horizontal scrolling carousel',
+
+			// Data / dynamic
+			'form'               => 'Form with input fields',
+			'map'                => 'Google Maps or OpenStreetMap embed',
+			'code'               => 'Raw HTML / CSS / JS code block',
+			'template'           => 'Reusable Bricks template reference',
+			'post-content'       => 'Dynamic post / page content area',
+			'posts'              => 'Post listing / query loop',
+			'pagination'         => 'Page navigation for post lists',
+
+			// Extra
+			'list'               => 'Ordered or unordered list',
+			'social-icons'       => 'Social media icon links',
+			'alert'              => 'Alert / notice banner',
+			'progress-bar'       => 'Progress bar indicator',
+			'countdown'          => 'Countdown timer',
+			'counter'            => 'Animated number counter',
+			'pricing-tables'     => 'Pricing comparison table',
+			'team-members'       => 'Team member profile cards',
+			'testimonials'       => 'Testimonial / review display',
+			'logo'               => 'Site logo element',
+			'search'             => 'Search input element',
+			'sidebar'            => 'Widget sidebar area',
+			'wordpress'          => 'WordPress widget element',
+			'shortcode'          => 'WordPress shortcode embed',
+		];
+	}
+
+	/**
 	 * GET /site/element-types — rich element type metadata with optional controls.
+	 *
+	 * The response includes a locale-independent `description` field for every
+	 * known element type so that AI agents can identify elements regardless of
+	 * the WordPress display language.
 	 */
 	public static function get_element_types( WP_REST_Request $request ): WP_REST_Response {
 		$include_controls = (bool) $request->get_param( 'include_controls' );
@@ -148,7 +224,8 @@ class ATB_Site_API {
 			], 200 );
 		}
 
-		$types = [];
+		$descriptions = self::element_descriptions();
+		$types        = [];
 
 		foreach ( \Bricks\Elements::$elements as $name => $entry ) {
 			$label    = '';
@@ -201,10 +278,11 @@ class ATB_Site_API {
 			}
 
 			$type_data = [
-				'name'     => $name,
-				'label'    => $label,
-				'category' => $category,
-				'icon'     => $icon,
+				'name'        => $name,
+				'label'       => $label,
+				'description' => $descriptions[ $name ] ?? null,
+				'category'    => $category,
+				'icon'        => $icon,
 			];
 
 			if ( $include_controls && ! empty( $controls ) ) {

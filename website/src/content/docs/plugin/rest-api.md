@@ -26,9 +26,12 @@ curl -s https://your-site.com/wp-json/agent-bricks/v1/site/info \
   "breakpoints": { "desktop": 1280, "tablet": 1024, "mobile": 768 },
   "pluginVersion": "1.2.0",
   "phpVersion": "8.2.27",
-  "wpVersion": "6.7.2"
+  "wpVersion": "6.7.2",
+  "locale": "en_US"
 }
 ```
+
+The `locale` field returns the WordPress site locale (e.g., `de_DE`, `fr_FR`). This helps AI agents understand the site language.
 
 ### GET /site/frameworks
 
@@ -68,7 +71,9 @@ curl -s https://your-site.com/wp-json/agent-bricks/v1/site/frameworks \
 
 ### GET /site/element-types
 
-Returns all registered Bricks element types with labels, categories, and icons.
+Returns all registered Bricks element types with labels, categories, icons, and locale-independent English descriptions.
+
+The `label` field is localized (translated to the WordPress site language). The `description` field is always in English, providing a stable identifier for AI agents regardless of the site locale.
 
 **Query parameters:**
 
@@ -85,12 +90,14 @@ curl -s "https://your-site.com/wp-json/agent-bricks/v1/site/element-types?catego
 ```json
 {
   "elementTypes": [
-    { "name": "heading", "label": "Heading", "category": "general", "icon": "ti-text" },
-    { "name": "text-basic", "label": "Basic Text", "category": "general", "icon": "ti-align-left" }
+    { "name": "heading", "label": "Heading", "description": "Heading text (h1–h6, set level via \"tag\" setting)", "category": "general", "icon": "ti-text" },
+    { "name": "text-basic", "label": "Basic Text", "description": "Simple text / paragraph — use for standard body text", "category": "general", "icon": "ti-align-left" }
   ],
   "count": 2
 }
 ```
+
+**Note:** On non-English installations, `label` will be translated (e.g., `"Überschrift"` for heading in German) while `description` remains English. Always use the `name` field (element slug) for element identification — it is language-independent.
 
 ### GET /pages
 

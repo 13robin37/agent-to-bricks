@@ -90,12 +90,18 @@ Each element node has this shape:
 }
 
 ### Available Element Types
-- **Layout:** section, container, block, div
-- **Typography:** heading, text-basic, rich-text, text-link
+
+Always use the element type **name** (slug) shown below — these are language-independent identifiers that never change regardless of WordPress locale. Do NOT use translated display labels.
+
+- **Layout:** section (top-level page wrapper), container (content container inside sections), block (flex row/column layout), div (generic wrapper)
+- **Typography:** heading (h1–h6 heading, set level via "tag"), text-basic (simple text/paragraph — the standard element for body text), rich-text (rich text with inline HTML formatting), text-link (clickable text link)
 - **Interactive:** button, icon, image, video
-- **Navigation:** nav-menu, nav-nested, offcanvas
-- **Components:** accordion, accordion-nested, tabs, tabs-nested, slider, slider-nested
-- **Data:** form, map, code, template, post-content, posts, pagination
+- **Navigation:** nav-menu (WordPress menu), nav-nested (nested custom navigation), offcanvas (slide-out panel)
+- **Components:** accordion, accordion-nested, tabs, tabs-nested, slider, slider-nested, carousel
+- **Data:** form, map, code (raw HTML/CSS/JS), template, post-content, posts, pagination
+- **Extra:** list, social-icons, alert, progress-bar, countdown, counter, pricing-tables, team-members, testimonials, logo, search, sidebar
+
+**Important:** For standard paragraph text, always use `text-basic`. Only use `rich-text` when the content needs inline HTML formatting (bold, italic, embedded links within the text).
 
 ### Settings Reference
 - `text` — Content string (heading, text-basic, button)

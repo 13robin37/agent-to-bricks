@@ -55,9 +55,12 @@ Examples:
 						enc.SetIndent("", "  ")
 						return enc.Encode(et)
 					}
-					fmt.Printf("Name:     %s\n", et.Name)
-					fmt.Printf("Label:    %s\n", et.Label)
-					fmt.Printf("Category: %s\n", et.Category)
+					fmt.Printf("Name:        %s\n", et.Name)
+					fmt.Printf("Label:       %s\n", et.Label)
+					if et.Description != "" {
+						fmt.Printf("Description: %s\n", et.Description)
+					}
+					fmt.Printf("Category:    %s\n", et.Category)
 					if et.Controls != nil {
 						fmt.Println("\nControls:")
 						data, _ := json.MarshalIndent(et.Controls, "  ", "  ")
@@ -81,9 +84,13 @@ Examples:
 		}
 
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-		fmt.Fprintln(w, "NAME\tLABEL\tCATEGORY\tICON")
+		fmt.Fprintln(w, "NAME\tLABEL\tDESCRIPTION\tCATEGORY")
 		for _, et := range resp.ElementTypes {
-			fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", et.Name, et.Label, et.Category, et.Icon)
+			desc := et.Description
+			if len(desc) > 50 {
+				desc = desc[:47] + "..."
+			}
+			fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", et.Name, et.Label, desc, et.Category)
 		}
 		w.Flush()
 		fmt.Printf("\n%d element types\n", resp.Count)

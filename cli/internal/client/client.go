@@ -404,11 +404,12 @@ func (c *Client) Rollback(pageID int, snapshotID string) (*RollbackResponse, err
 
 // ElementTypeInfo from GET /site/element-types.
 type ElementTypeInfo struct {
-	Name     string                 `json:"name"`
-	Label    string                 `json:"label"`
-	Category string                 `json:"category"`
-	Icon     string                 `json:"icon"`
-	Controls map[string]interface{} `json:"controls,omitempty"`
+	Name        string                 `json:"name"`
+	Label       string                 `json:"label"`
+	Description string                 `json:"description,omitempty"`
+	Category    string                 `json:"category"`
+	Icon        string                 `json:"icon"`
+	Controls    map[string]interface{} `json:"controls,omitempty"`
 }
 
 // ElementTypesResponse from GET /site/element-types.
