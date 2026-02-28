@@ -234,9 +234,9 @@ class ATB_Element_Validator {
 					$clean[ $key ] = $unfiltered ? $value : wp_kses_post( $value );
 				}
 			} elseif ( in_array( $key, self::$css_keys, true ) ) {
-				// CSS code: strip HTML tags but preserve newlines and whitespace.
+				// CSS code: strip HTML tags, then format for Bricks compatibility.
 				if ( is_string( $value ) ) {
-					$clean[ $key ] = wp_strip_all_tags( $value );
+					$clean[ $key ] = self::format_css( wp_strip_all_tags( $value ) );
 				}
 			} elseif ( $key === 'code' ) {
 				// Code element content (raw HTML/JS/CSS by design).
@@ -310,6 +310,31 @@ class ATB_Element_Validator {
 			);
 		}
 		return $clean;
+	}
+
+	/**
+	 * Format CSS string for Bricks Builder compatibility.
+	 *
+	 * Ensures line breaks after '{', after ';', and before '}'.
+	 * Idempotent: running multiple times produces the same result.
+	 *
+	 * @param string $css Raw CSS string.
+	 * @return string Formatted CSS string.
+	 */
+	private static function format_css( $css ) {
+		// Normalize: ensure newline after every {
+		$css = preg_replace( '/\{\s*/', "{\n", $css );
+
+		// Normalize: ensure newline before every }
+		$css = preg_replace( '/\s*\}/', "\n}", $css );
+
+		// Normalize: ensure newline after every ; (declaration separator)
+		$css = preg_replace( '/;\s*/', ";\n", $css );
+
+		// Collapse any multiple consecutive newlines to one.
+		$css = preg_replace( '/\n{2,}/', "\n", $css );
+
+		return trim( $css );
 	}
 
 	/**

@@ -109,6 +109,8 @@ Each element node has this shape:
 - `_typography` — Typography overrides { "font-size": "2rem", "font-weight": "700" }
 - `_background` — Background settings
 - `_border` — Border and border-radius
+- `_cssCustom` — Custom CSS for this element. IMPORTANT: format with line breaks — newline after each `{` and `;`, newline before each `}`. Example: "selector {\ncolor: red;\nfont-size: 16px;\n}"
+- `_cssHover` — Hover-state CSS (same formatting rules as _cssCustom)
 PROMPT;
 	}
 
